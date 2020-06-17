@@ -1,48 +1,48 @@
-class Artist 
-  
-  extend Concerns::Creatable
-  
-  @@all = []
-  
+class Artist
+  extend Concerns::Findable
   attr_accessor :name
-  
-  def initialize(name)
-    @name = name 
-    save
-    @songs = []
-    self 
-  end   
+  attr_reader :songs
 
-  def self.all 
-    @@all 
-  end   
-  
-  def self.all=(array)
-    @@all = array  
-  end 
-  
+  @@all = []
+
+  def initialize(name)
+    @name = name
+    @songs = []
+    # self.save
+  end
+
+  def self.all
+    @@all
+  end
+
   def self.destroy_all
-    self.all = []
-  end   
-  
+    @@all.clear
+  end
+
   def save
-    Artist.all << self 
-  end   
-  
+    @@all << self
+  end
+
+  def self.create(name)
+    artist = self.new(name)
+    artist.save
+    artist
+  end
+
   def songs
     @songs
-  end   
-  
+  end
+
   def add_song(song)
-    self.songs << song unless songs.index(song)
-    song.artist = self unless song.artist 
-  end   
-  
-  def genres 
-    genre_types = songs.map do |song| 
-      song.genre 
-    end  
-    genre_types.uniq
-  end 
-  
-end 
+
+      song.artist = self unless song.artist
+      songs << song unless songs.include?(song)
+      # @songs.uniq!
+
+  end
+
+  def genres
+    # self.songs.collect {|song| song.genre}
+    songs.collect { |song| song.genre}.uniq
+  end
+end
